@@ -4,11 +4,12 @@ from pymongo import MongoClient
 from bson import ObjectId
 import sys
 import streamlit as st
-import ssl
+import certifi
+ca = certifi.where()
 
 MONGO_URI = st.secrets['MONGO_URI']
 
-client = MongoClient(MONGO_URI, ssl_cert_reqs=ssl.CERT_NONE)
+client = MongoClient(MONGO_URI, tlsCAFile=ca)
 
 def get_db(company_name):
     # client = MongoClient(config("MONGO_URI"))
