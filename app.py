@@ -20,8 +20,6 @@ def initialize_session_state():
 def run_app():
     st.set_page_config(page_title="Project Management Tool", layout="wide")
     st.sidebar.image("cese.jpg")
-    #st.sidebar.image("science.jpg")
-    #st.sidebar.image("stem.jpg")
     st.sidebar.image("knowledge.png")
     st.title("Project Management for Office of Hannah Chair")
 
@@ -31,26 +29,31 @@ def run_app():
     if 'show_create_user_form' not in st.session_state:
         st.session_state.show_create_user_form = False
 
+    # Check query params to handle page navigation
+    query_params = st.experimental_get_query_params()
+    page = query_params.get("page", [""])[0]
+
     if not st.session_state.logged_in:
         display_login_page()
     else:
-        # if st.session_state.is_first_login and (st.session_state.user is not None and not st.session_state.user.get('is_initial_admin', False)):  
-        #     display_password_change_section(st.session_state.user["email"], st.session_state.company_name)  # Redirect to password change function
-        # else:
         if st.session_state.company_name == "":
             st.session_state.company_name = st.session_state.user["company_name"]  # Set the company name from the user data
 
         if st.session_state.user["role"] == "admin":
-            if st.session_state.page == "Task Details":
+            if page == "task_details" or st.session_state.page == "Task Details":
+                st.session_state.page = "Task Details"
                 display_task_details(st.session_state.user["email"])
-            elif st.session_state.page == "Subtask Details":
+            elif page == "subtask_details" or st.session_state.page == "Subtask Details":
+                st.session_state.page = "Subtask Details"
                 display_subtasks_details(st.session_state.user["email"])
             else:
-                display_admin_dashboard(st.session_state.user["name"])  # add st.session_state as a parameter
+                display_admin_dashboard(st.session_state.user["name"])
         elif st.session_state.user["role"] == "user":
-            if st.session_state.page == "Task Details":
+            if page == "task_details" or st.session_state.page == "Task Details":
+                st.session_state.page = "Task Details"
                 display_task_details(st.session_state.user["email"])
-            elif st.session_state.page == "Subtask Details":
+            elif page == "subtask_details" or st.session_state.page == "Subtask Details":
+                st.session_state.page = "Subtask Details"
                 display_subtasks_details(st.session_state.user["email"])
             else:
                 display_user_dashboard(st.session_state.user["name"])
