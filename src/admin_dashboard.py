@@ -1,6 +1,6 @@
 import streamlit as st
 from .database import get_users_collection
-from .helpers import create_new_user, create_task, find_tasks_by_status, update_task_status, login, change_password, admin_user_exists, get_task_collection, load_lottie_file, update_task_priority_based_on_dependencies, generate_unique_key
+from .helpers import create_new_user, create_task, find_tasks_by_status, update_task_status, login, change_password, admin_user_exists, get_task_collection, load_lottie_file, update_task_priority_based_on_dependencies
 from datetime import datetime
 from pymongo import DESCENDING
 # from .authentication import display_password_change_section
@@ -35,7 +35,7 @@ def display_admin_dashboard(name):
         state['selected_option'] = 'My Tasks'
 
     for option, emoji in admin_options.items():
-        if st.sidebar.button(f"{emoji} {option}", key=generate_unique_key('sidebar-button', option)):
+        if st.sidebar.button(f"{emoji} {option}"):
             state['selected_option'] = option
 
     selected_option = state['selected_option']
@@ -442,7 +442,7 @@ def display_admin_dashboard(name):
     st.sidebar.write("")  # Add some space before the logout button
     st.sidebar.write("")  # Add more space (repeat as needed)
     st.sidebar.write("")
-    logout_btn = st.sidebar.button("Logout", key=generate_unique_key('logout-button'))
+    logout_btn = st.sidebar.button("Logout", key="admin_logout")
     if logout_btn:
         st.session_state.clear()  # Clear all items from the session state
         # Re-initialize necessary attributes
@@ -450,3 +450,4 @@ def display_admin_dashboard(name):
         st.session_state.user = None
         st.session_state.page = "Login"  # or any default page you want after logout
         st.experimental_rerun()
+
