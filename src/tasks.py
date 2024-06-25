@@ -57,11 +57,11 @@ def display_task(task, email=None, company_name=None, is_admin=False, allow_stat
     with col8:
         st.empty()
     if email:
-        st.write(task['created_at'])
         unique_key = f"{task['_id']}-{email}-{task_index:05d}-{task['created_at'].isoformat()}-{time.time()}"
         with col9:
             view_update_btn = st.button("View/Update", key=f"view-update-{unique_key}")
             if view_update_btn:
+                st.write('## Clicked')
                 st.session_state.selected_task_id = str(task['_id'])
                 st.session_state.company_name = company_name
                 st.session_state.page = "Task Details"                
