@@ -63,6 +63,7 @@ def display_task(task, email=None, company_name=None, is_admin=False, allow_stat
             st.write(view_update_btn)
             if view_update_btn:
                 st.write('## Clicked')
+                time.sleep(10)
                 st.session_state.selected_task_id = str(task['_id'])
                 st.session_state.company_name = company_name
                 st.session_state.page = "Task Details"                
