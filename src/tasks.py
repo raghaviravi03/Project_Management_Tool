@@ -58,9 +58,11 @@ def display_task(task, email=None, company_name=None, is_admin=False, allow_stat
         st.empty()
     if email:
         with col9:
-            unique_key = f"{task['_id']}-{email}-{task_index:05d}-{task['created_at'].isoformat()}-{time.time()}"
-            st.write(unique_key)
-            view_update_btn = st.button("View/Update", key=f"view-update-{unique_key}")
+            unique_key = f"{task['_id']}-{email}-{task_index:05d}-{task['created_at'].isoformat()}"
+            try:
+                view_update_btn = st.button("View/Update", key=f"view-update-{unique_key}")
+            except:
+                pass
             if view_update_btn:
                 st.write('## Clicked')
                 st.session_state.selected_task_id = str(task['_id'])
@@ -68,7 +70,7 @@ def display_task(task, email=None, company_name=None, is_admin=False, allow_stat
                 st.session_state.page = "Task Details"                
                 st.rerun()
         with col10:
-            unique_key = f"{task['_id']}-{email}-{task_index:05d}-{task['created_at'].isoformat()}-{time.time()}"
+            unique_key = f"{task['_id']}-{email}-{task_index:05d}-{task['created_at'].isoformat()}"
             view_subtasks_btn = st.button("View Subtasks", key=f"view-subtasks-{unique_key}")
             if view_subtasks_btn:
                 st.session_state.selected_task_id = str(task['_id'])
