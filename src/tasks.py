@@ -33,6 +33,10 @@ def display_task(task, email=None, company_name=None, is_admin=False, allow_stat
     task_admin_names = get_user_names_from_emails(task.get('task_admin', []), company_name)
 
     unique_key_base = f"{task['_id']}-{email}-{task_index}"
+    session_key_component = st.session_state.get('session_key', st.secrets["SESSION_KEY"])
+    # Full key combines both static and dynamic elements
+    full_key = f"{unique_key_base}-{session_key_component}"
+
     col1, col2, col3, col4, col5, col6, col7, col8, col9, col10 = st.columns([1, 3, 3, 1, 1, 1, 1, 1, 2, 2])
     with col1:
         truncated_name = truncate_text(task['name'], 30)
@@ -60,14 +64,14 @@ def display_task(task, email=None, company_name=None, is_admin=False, allow_stat
         st.empty()
     if email:
         with col9:
-            view_update_btn = st.button("View/Update", key=f"view-update-{unique_key_base}")
+            view_update_btn = st.button("View/Update", key=f"view-update-{full_key}")
             if view_update_btn:
                 st.session_state.selected_task_id = task['_id']
                 st.session_state.page = "Task Details"
                 st.experimental_rerun()
 
         with col10:
-            view_subtasks_btn = st.button("View Subtasks", key=f"view-subtasks-{unique_key_base}")
+            view_subtasks_btn = st.button("View Subtasks", key=f"view-subtasks-{full_key}")
             if view_subtasks_btn:
                 st.session_state.selected_task_id = task['_id']
                 st.session_state.page = "Subtask Details"
