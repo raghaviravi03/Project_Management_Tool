@@ -450,4 +450,3 @@ def display_admin_dashboard(name):
         st.session_state.user = None
         st.session_state.page = "Login"  # or any default page you want after logout
         st.experimental_rerun()
-
