@@ -59,6 +59,7 @@ def display_task(task, email=None, company_name=None, is_admin=False, allow_stat
     if email:
         with col9:
             unique_key = f"{task['_id']}-{email}-{task_index:05d}-{task['created_at'].isoformat()}"
+            view_update_btn = None
             try:
                 view_update_btn = st.button("View/Update", key=f"view-update-{unique_key}")
             except:
@@ -71,7 +72,11 @@ def display_task(task, email=None, company_name=None, is_admin=False, allow_stat
                 st.rerun()
         with col10:
             unique_key = f"{task['_id']}-{email}-{task_index:05d}-{task['created_at'].isoformat()}"
-            view_subtasks_btn = st.button("View Subtasks", key=f"view-subtasks-{unique_key}")
+            view_subtasks_btn = None
+            try:
+                view_subtasks_btn = st.button("View Subtasks", key=f"view-subtasks-{unique_key}")
+            except:
+                pass
             if view_subtasks_btn:
                 st.session_state.selected_task_id = str(task['_id'])
                 st.session_state.company_name = company_name
