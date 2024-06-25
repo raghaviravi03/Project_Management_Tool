@@ -61,6 +61,7 @@ def display_task(task, email=None, company_name=None, is_admin=False, allow_stat
         unique_key = f"{task['_id']}-{email}-{task_index:05d}-{task['created_at']}"
         with col9:
             #view_update_btn = st.button("View/Update", key=f"view-update-{unique_key}")
+            pass
         if view_update_btn:
             st.session_state.selected_task_id = str(task['_id'])
             st.session_state.company_name = company_name
