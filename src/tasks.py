@@ -25,10 +25,11 @@ def display_task(task, email=None, company_name=None, is_admin=False, allow_stat
         "Moderate": "orange",
         "Low": "green"
     }
-
+    
+    # Fetch user names for assigned users and admins
     assigned_to_names = get_user_names_from_emails(task['assigned_to'], company_name)
     task_admin_names = get_user_names_from_emails(task.get('task_admin', []), company_name)
-
+    
     col1, col2, col3, col4, col5, col6, col7, col8, col9, col10 = st.columns([1, 3, 3, 1, 1, 1, 1, 1, 2, 2])
     with col1:
         truncated_name = truncate_text(task['name'], 30)
@@ -55,21 +56,21 @@ def display_task(task, email=None, company_name=None, is_admin=False, allow_stat
     with col8:
         st.empty()
     if email:
-        unique_key = f"{task['_id']}-{email}-{task_index}-{datetime.now().timestamp()}"
+        unique_key = f"{task['_id']}-{email}-{task_index:05d}-{task['created_at'].isoformat()}"
         with col9:
             view_update_btn = st.button("View/Update", key=f"view-update-{unique_key}")
         if view_update_btn:
             st.session_state.selected_task_id = str(task['_id'])
             st.session_state.company_name = company_name
             st.session_state.page = "Task Details"                
-            st.experimental_set_query_params(page="task_details")
+            st.experimental_rerun()
     with col10:
         view_subtasks_btn = st.button("View Subtasks", key=f"view-subtasks-{unique_key}")
         if view_subtasks_btn:
             st.session_state.selected_task_id = str(task['_id'])
             st.session_state.company_name = company_name
             st.session_state.page = "Subtask Details"
-            st.experimental_set_query_params(page="subtask_details") 
+            st.experimental_rerun()
 
 def display_task_details(email=None):
     st.subheader("Task Details")
@@ -209,12 +210,16 @@ def display_subtask(subtask, parent_task_id, subtask_index, email):
         "Moderate": "orange",
         "Low": "green"
     }
+
+    assigned_to_names = get_user_names_from_emails(subtask['assigned_to'], st.session_state.company_name)
+    task_admin_names = get_user_names_from_emails(subtask.get('task_admin', []), st.session_state.company_name)
+
     st.markdown(f"### Subtask {subtask_index + 1}: {subtask['name']}")
     col1, col2, col3, col4, col5, col6 = st.columns([3, 3, 2, 2, 1, 1])
     with col1:
-        st.markdown(f"**Assigned to**: {', '.join(subtask['assigned_to'])}")
+        st.markdown(f"**Assigned to**: {', '.join(assigned_to_names)}")
     with col2:
-        subtask_admin = subtask.get('task_admin', 'Not Set')
+        subtask_admin = ', '.join(task_admin_names) if task_admin_names else 'Not Set'
         st.markdown(f"**Admin**: {subtask_admin}")
     with col3:
         st.markdown(f'**Status**: <p style="color:{status_color[subtask["status"]]}">{subtask["status"]}</p>', unsafe_allow_html=True)
@@ -230,7 +235,7 @@ def display_subtask(subtask, parent_task_id, subtask_index, email):
     with col6:
         st.empty()
 
-    unique_key = f"{parent_task_id}-{subtask['name']}-{email}-{subtask_index:05d}"
+    unique_key = f"{parent_task_id}-{subtask['name']}-{email}-{subtask_index:05d}-{subtask['created_at'].isoformat()}"
     with st.form(key=f"update_subtask_form-{unique_key}", clear_on_submit=True):
         row1_col1, row1_col2 = st.columns([2,2])
         with row1_col1:
