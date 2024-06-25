@@ -186,15 +186,6 @@ def update_task_priority_based_on_dependencies(company_name):
                 },
             )
 
-def generate_unique_key(base, *args):
-    """
-    Generate a unique key for Streamlit widgets.
-    :param base: The base name for the key.
-    :param args: Additional arguments to ensure uniqueness.
-    :return: A unique key string.
-    """
-    return f"{base}-{'-'.join(map(str, args))}-{uuid.uuid4()}"
-
 def get_user_names_from_emails(emails, company_name):
     users = get_users_collection().find({"email": {"$in": emails}, "company_name": company_name})
     email_to_name = {user['email']: user['name'] for user in users}
