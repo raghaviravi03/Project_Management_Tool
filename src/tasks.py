@@ -59,6 +59,7 @@ def display_task(task, email=None, company_name=None, is_admin=False, allow_stat
     if email:
         with col9:
             unique_key = f"{task['_id']}-{email}-{task_index:05d}-{task['created_at'].isoformat()}-{time.time()}"
+            st.write(unique_key)
             view_update_btn = st.button("View/Update", key='fkjfnksfnkjfnkrsnkfs')
             if view_update_btn:
                 st.write('## Clicked')
