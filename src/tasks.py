@@ -1,6 +1,6 @@
 import streamlit as st
 from .database import get_users_collection
-from .helpers import create_new_user, create_task, find_tasks_by_status, update_task_status, login, change_password, admin_user_exists, get_task_collection, get_user_names_from_emails
+from .helpers import create_new_user, create_task, find_tasks_by_status, update_task_status, login, change_password, admin_user_exists, get_task_collection, get_user_names_from_emails, generate_unique_key
 from datetime import datetime
 from pymongo import DESCENDING
 import pytz
@@ -13,15 +13,6 @@ def truncate_text(text, max_length):
         return text[:max_length] + "..."
     else:
         return text
-
-def generate_unique_key(base, *args):
-    """
-    Generate a unique key for Streamlit widgets.
-    :param base: The base name for the key.
-    :param args: Additional arguments to ensure uniqueness.
-    :return: A unique key string.
-    """
-    return f"{base}-{'-'.join(map(str, args))}-{uuid.uuid4()}"
 
 def display_task(task, email=None, company_name=None, is_admin=False, allow_status_change=True, task_index=0):
     task_id = str(task['_id'])
