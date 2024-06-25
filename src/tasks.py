@@ -29,7 +29,8 @@ def display_task(task, email=None, company_name=None, is_admin=False, allow_stat
     # Fetch user names for assigned users and admins
     assigned_to_names = get_user_names_from_emails(task['assigned_to'], company_name)
     task_admin_names = get_user_names_from_emails(task.get('task_admin', []), company_name)
-    
+
+    unique_key_base = f"{task['_id']}-{task['created_at'].isoformat()}"
     col1, col2, col3, col4, col5, col6, col7, col8, col9, col10 = st.columns([1, 3, 3, 1, 1, 1, 1, 1, 2, 2])
     with col1:
         truncated_name = truncate_text(task['name'], 30)
@@ -56,16 +57,15 @@ def display_task(task, email=None, company_name=None, is_admin=False, allow_stat
     with col8:
         st.empty()
     if email:
-        unique_key = f"{task['_id']}-{email}-{task_index:05d}-{task['created_at'].isoformat()}"
         with col9:
-            view_update_btn = st.button("View/Update", key=f"view-update-{unique_key}")
+            view_update_btn = st.button("View/Update", key=f"view-update-{unique_key_base}-{email}-{task_index}")
+        with col10:
+            view_subtasks_btn = st.button("View Subtasks", key=f"view-subtasks-{unique_key_base}-{email}-{task_index}")
         if view_update_btn:
             st.session_state.selected_task_id = str(task['_id'])
             st.session_state.company_name = company_name
             st.session_state.page = "Task Details"                
             st.experimental_rerun()
-        with col10:
-            view_subtasks_btn = st.button("View Subtasks", key=f"view-subtasks-{unique_key}")
         if view_subtasks_btn:
             st.session_state.selected_task_id = str(task['_id'])
             st.session_state.company_name = company_name
