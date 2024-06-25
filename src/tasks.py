@@ -4,7 +4,7 @@ from .helpers import create_new_user, create_task, find_tasks_by_status, update_
 from datetime import datetime
 from pymongo import DESCENDING
 import pytz
-import time
+import uuid
 from bson import ObjectId
 
 def truncate_text(text, max_length):
@@ -13,12 +13,19 @@ def truncate_text(text, max_length):
         return text[:max_length] + "..."
     else:
         return text
-def generate_unique_key(base, task_id, email, task_index):
-    return f"{base}-{task_id}-{email}-{task_index}"
-    
+
+def generate_unique_key(base, *args):
+    """
+    Generate a unique key for Streamlit widgets.
+    :param base: The base name for the key.
+    :param args: Additional arguments to ensure uniqueness.
+    :return: A unique key string.
+    """
+    return f"{base}-{'-'.join(map(str, args))}-{uuid.uuid4()}"
+
 def display_task(task, email=None, company_name=None, is_admin=False, allow_status_change=True, task_index=0):
-    unique_key_base = "task-display"
     task_id = str(task['_id'])
+    unique_key_base = "task-display"
     unique_key = generate_unique_key(unique_key_base, task_id, email, task_index)
     
     status_color = {
@@ -76,7 +83,7 @@ def display_task(task, email=None, company_name=None, is_admin=False, allow_stat
                 st.session_state.selected_task_id = task['_id']
                 st.session_state.page = "Subtask Details"
                 st.experimental_rerun()
-
+                
 def display_task_details(email=None):
     st.subheader("Task Details")
 
