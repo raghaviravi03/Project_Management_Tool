@@ -64,8 +64,8 @@ def display_task(task, email=None, company_name=None, is_admin=False, allow_stat
             st.session_state.company_name = company_name
             st.session_state.page = "Task Details"                
             st.experimental_rerun()
-    with col10:
-        view_subtasks_btn = st.button("View Subtasks", key=f"view-subtasks-{unique_key}")
+        with col10:
+            view_subtasks_btn = st.button("View Subtasks", key=f"view-subtasks-{unique_key}")
         if view_subtasks_btn:
             st.session_state.selected_task_id = str(task['_id'])
             st.session_state.company_name = company_name
