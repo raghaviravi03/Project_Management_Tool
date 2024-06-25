@@ -1,10 +1,9 @@
 import streamlit as st
 from .database import get_users_collection
-from .helpers import create_new_user, create_task, find_tasks_by_status, update_task_status, login, change_password, admin_user_exists, get_task_collection, get_user_names_from_emails, generate_unique_key
+from .helpers import create_new_user, create_task, find_tasks_by_status, update_task_status, login, change_password, admin_user_exists, get_task_collection, get_user_names_from_emails
 from datetime import datetime
 from pymongo import DESCENDING
 import pytz
-import uuid
 from bson import ObjectId
 
 def truncate_text(text, max_length):
@@ -15,10 +14,6 @@ def truncate_text(text, max_length):
         return text
 
 def display_task(task, email=None, company_name=None, is_admin=False, allow_status_change=True, task_index=0):
-    task_id = str(task['_id'])
-    unique_key_base = "task-display"
-    unique_key = generate_unique_key(unique_key_base, task_id, email, task_index)
-    
     status_color = {
         "pending": "red",
         "in progress": "orange",
@@ -61,20 +56,22 @@ def display_task(task, email=None, company_name=None, is_admin=False, allow_stat
     with col8:
         st.empty()
     if email:
+        unique_key = f"{task['_id']}-{email}-{task_index:05d}-{task['created_at'].isoformat()}"
         with col9:
             view_update_btn = st.button("View/Update", key=f"view-update-{unique_key}")
-            if view_update_btn:
-                st.session_state.selected_task_id = task['_id']
-                st.session_state.page = "Task Details"
-                st.experimental_rerun()
+        if view_update_btn:
+            st.session_state.selected_task_id = str(task['_id'])
+            st.session_state.company_name = company_name
+            st.session_state.page = "Task Details"                
+            st.experimental_rerun()
+    with col10:
+        view_subtasks_btn = st.button("View Subtasks", key=f"view-subtasks-{unique_key}")
+        if view_subtasks_btn:
+            st.session_state.selected_task_id = str(task['_id'])
+            st.session_state.company_name = company_name
+            st.session_state.page = "Subtask Details"
+            st.experimental_rerun()
 
-        with col10:
-            view_subtasks_btn = st.button("View Subtasks", key=f"view-subtasks-{unique_key}")
-            if view_subtasks_btn:
-                st.session_state.selected_task_id = task['_id']
-                st.session_state.page = "Subtask Details"
-                st.experimental_rerun()
-                
 def display_task_details(email=None):
     st.subheader("Task Details")
 
