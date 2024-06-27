@@ -356,7 +356,7 @@ def display_admin_dashboard(name):
     
         # Display Lottie animation in the first column
         with col1:
-            #lottie_json = load_lottie_file("./resources/profile.json")
+            lottie_json = load_lottie_file("./resources/profile.json")
             #st_lottie(
                 lottie_json,
                 speed=1,
