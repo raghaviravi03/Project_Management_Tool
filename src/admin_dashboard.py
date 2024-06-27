@@ -25,8 +25,8 @@ def display_admin_dashboard(name):
         "Create Task": "➕", 
         "Monitor Tasks": "🔍",
         "User Management": "👥",
-        "Profile": "👤"#,
-        #"Task Statistics": "📊"
+        "Profile": "👤",
+        "Task Statistics": "📊"
     }
 
     state = st.session_state
@@ -368,77 +368,82 @@ def display_admin_dashboard(name):
                 key="profile_animation"
             )
 
-    # elif selected_option == "Task Statistics":
-    #     st.subheader("Task Statistics")
+    elif selected_option == "Task Statistics":
+        st.subheader("Task Statistics")
 
-    #     # Get all tasks
-    #     tasks = list(get_task_collection(st.session_state.company_name).find())
+        # Get all tasks
+        tasks = list(get_task_collection(st.session_state.company_name).find())
         
-    #     # Create columns
-    #     col1, col2 = st.columns(2)
+        # Create columns
+        col1, col2 = st.columns(2)
         
-    #     # Task Status Pie chart
-    #     task_status = [task['status'] for task in tasks]
+        # Task Status Pie chart
+        task_status = [task['status'] for task in tasks]
 
-    #     # Only include statuses that exist
-    #     all_statuses = ['pending', 'in progress', 'completed', 'cancelled']
-    #     task_status = [status for status in task_status if status in all_statuses]
+        # Only include statuses that exist
+        all_statuses = ['pending', 'in progress', 'completed', 'cancelled']
+        task_status = [status for status in task_status if status in all_statuses]
 
-    #     df_status = pd.DataFrame(task_status, columns=['status'])
-    #     fig = px.pie(df_status, names='status', title='Task Status Distribution', color = 'status',
-    #                 color_discrete_map={'pending':'#FA6C5C', 'in progress':'#6C5CFA', 'completed':'#36F57F', 'cancelled':'#A2AD9C'})
-    #     col1.plotly_chart(fig, config={'displayModeBar': False})
+        df_status = pd.DataFrame(task_status, columns=['status'])
+        fig = px.pie(df_status, names='status', title='Task Status Distribution', color = 'status',
+                    color_discrete_map={'pending':'#FA6C5C', 'in progress':'#6C5CFA', 'completed':'#36F57F', 'cancelled':'#A2AD9C'})
+        col1.plotly_chart(fig, config={'displayModeBar': False})
 
-    #     # Task Priority Histogram
-    #     task_priorities = [task['priority'] for task in tasks]
-    #     df_priority = pd.DataFrame(task_priorities, columns=['priority'])
-    #     df_priority['count'] = 1  # adding a count column
-    #     df_priority_grouped = df_priority.groupby('priority').count().reset_index()  # grouping by priority and counting
+        # Task Priority Histogram
+        task_priorities = [task['priority'] for task in tasks]
+        df_priority = pd.DataFrame(task_priorities, columns=['priority'])
+        df_priority['count'] = 1  # adding a count column
+        df_priority_grouped = df_priority.groupby('priority').count().reset_index()  # grouping by priority and counting
 
-    #     fig = px.bar(df_priority_grouped, x='priority', y='count', color='priority', title='Task Priority Distribution', 
-    #                 color_discrete_map={'High':'#F62817', 'Moderate':'#157DEC', 'Low':'#36F57F'})
-    #     col2.plotly_chart(fig, config={'displayModeBar': False})
+        fig = px.bar(df_priority_grouped, x='priority', y='count', color='priority', title='Task Priority Distribution', 
+                    color_discrete_map={'High':'#F62817', 'Moderate':'#157DEC', 'Low':'#36F57F'})
+        col2.plotly_chart(fig, config={'displayModeBar': False})
 
 
         
-    #     # User-specific Task Distribution
-    #     user_task_counts = Counter(task['assigned_to'] for task in tasks)
-    #     users = list(user_task_counts.keys())
-    #     user_task_nums = list(user_task_counts.values())
-    #     df_user = pd.DataFrame(list(zip(users, user_task_nums)), columns=['user', 'task_count'])
-    #     fig = px.bar(df_user, x='user', y='task_count', color='user', title='User-specific Task Distribution')
-    #     col1.plotly_chart(fig, config={'displayModeBar': False})
+        # User-specific Task Distribution
+        user_task_counts = Counter(user for task in tasks for user in task['assigned_to'])
+        users = list(user_task_counts.keys())
+        user_task_nums = list(user_task_counts.values())
+        df_user = pd.DataFrame(list(zip(users, user_task_nums)), columns=['user', 'task_count'])
+        fig = px.bar(df_user, x='user', y='task_count', color='user', title='User-specific Task Distribution')
+        col1.plotly_chart(fig, config={'displayModeBar': False})
 
-    #     # Task Distribution over Time Line Chart
-    #     task_creation_times = [task['created_at'] for task in tasks]
-    #     task_creation_times.sort()
-    #     task_counts_over_time = list(range(1, len(task_creation_times) + 1))
-    #     fig = px.line(x=task_creation_times, y=task_counts_over_time, title='Task Distribution Over Time')
-    #     col2.plotly_chart(fig, config={'displayModeBar': False})
+        # Task Distribution over Time Line Chart
+        task_creation_times = [task['created_at'] for task in tasks]
+        task_creation_times.sort()
+        task_counts_over_time = list(range(1, len(task_creation_times) + 1))
+        df_time = pd.DataFrame({
+            'task_creation_times': task_creation_times,
+            'task_counts_over_time': task_counts_over_time
+        })
+
+        fig = px.line(df_time, x='task_creation_times', y='task_counts_over_time', title='Task Distribution Over Time')
+        col2.plotly_chart(fig, config={'displayModeBar': False})
         
 
-    #     # Create a directed graph
-    #     G = nx.DiGraph()
+        # Create a directed graph
+        G = nx.DiGraph()
 
-    #     # Add a node for each task
-    #     for task in tasks:
-    #         G.add_node(task["name"])
+        # Add a node for each task
+        for task in tasks:
+            G.add_node(task["name"])
 
-    #     # Add an edge for each dependency
-    #     for task in tasks:
-    #         for dependent_task in task["dependent_tasks"]:
-    #             G.add_edge(dependent_task, task["name"])  # Add an edge from the dependent task to the task
+        # Add an edge for each dependency
+        for task in tasks:
+            for dependent_task in task["dependent_tasks"]:
+                G.add_edge(dependent_task, task["name"])  # Add an edge from the dependent task to the task
 
-    #     with st.expander("See Task dependency graph"):
-    #         # Draw the graph
-    #         fig, ax = plt.subplots(figsize=(10, 5))  # Create a figure and an axes.
-    #         # Compute a layout position for the graph
-    #         pos = nx.spring_layout(G)
-    #         # Draw the graph
-    #         nx.draw(G, pos, with_labels=True, node_color='skyblue', node_size=1500, edge_cmap=plt.cm.Blues, font_size=10, ax=ax)
-    #         # Display the figure in Streamlit
-    #         st.pyplot(fig)
-
+        with st.expander("See Task dependency graph"):
+            # Draw the graph
+            fig, ax = plt.subplots(figsize=(10, 5))  # Create a figure and an axes.
+            # Compute a layout position for the graph
+            pos = nx.spring_layout(G)
+            # Draw the graph
+            nx.draw(G, pos, with_labels=True, node_color='skyblue', node_size=1500, edge_cmap=plt.cm.Blues, font_size=10, ax=ax)
+            # Display the figure in Streamlit
+            st.pyplot(fig)
+            
     st.sidebar.write("")  # Add some space before the logout button
     st.sidebar.write("")  # Add more space (repeat as needed)
     st.sidebar.write("")
