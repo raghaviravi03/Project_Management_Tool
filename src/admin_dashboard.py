@@ -357,17 +357,8 @@ def display_admin_dashboard(name):
         # Display Lottie animation in the first column
         with col1:
             lottie_json = load_lottie_file("./resources/profile.json")
-            st_lottie(
-                lottie_json,
-                speed=1,
-                reverse=False,
-                loop=True,
-                quality="high",
-                height=500,
-                width=500,
-                key="profile_animation"
-            )
-
+            st_lottie(lottie_json, speed=1, height=200, key="profile_animation")
+            
     elif selected_option == "Task Statistics":
         st.subheader("Task Statistics")
 
