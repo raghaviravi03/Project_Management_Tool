@@ -31,7 +31,7 @@ def display_task(task, email=None, company_name=None, is_admin=False, allow_stat
     assigned_to_names = get_user_names_from_emails(task['assigned_to'], company_name)
     task_admin_names = get_user_names_from_emails(task.get('task_admin', []), company_name)
     
-    col1, col2, col3, col4, col5, col6, col7, col8, col9, col10 = st.columns([1, 3, 3, 1, 1, 1, 1, 1, 2, 2])
+    col1, col2, col3, col4, col5, col6, col7, col8, col9, col10 = st.columns([1, 3, 3, 1, 1, 1, 1, 2, 2])
     with col1:
         truncated_name = truncate_text(task['name'], 30)
         st.markdown(f"**Task**: {truncated_name}")
@@ -54,10 +54,8 @@ def display_task(task, email=None, company_name=None, is_admin=False, allow_stat
             st.markdown(f"**Due Date**: {due_date_str}")
         else:
             st.markdown(f"**Due Date**: Not Set")
-    with col8:
-        st.empty()
     if email:
-        with col9:
+        with col8:
             unique_key = f"{task['_id']}-{email}-{task_index:05d}-{task['created_at'].isoformat()}"
             view_update_btn = None
             try:
@@ -70,7 +68,7 @@ def display_task(task, email=None, company_name=None, is_admin=False, allow_stat
                 st.session_state.company_name = company_name
                 st.session_state.page = "Task Details"                
                 st.rerun()
-        with col10:
+        with col9:
             unique_key = f"{task['_id']}-{email}-{task_index:05d}-{task['created_at'].isoformat()}"
             view_subtasks_btn = None
             try:
