@@ -23,7 +23,7 @@ def run_app():
     #st.sidebar.image("science.jpg")
     #st.sidebar.image("stem.jpg")
     st.sidebar.image("knowledge.png")
-    st.title("Project Management for Office of Hannah Chair")
+    st.title("Office of Hannah Chair")
 
     initialize_session_state()  # Ensure session state is properly initialized
 
